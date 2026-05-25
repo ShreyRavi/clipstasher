@@ -118,6 +118,46 @@ If Xcode shows "Missing package product" errors, go to **File → Packages → R
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for prerequisites and build instructions.
 
+## Building a release DMG
+
+Prerequisites: macOS, Xcode 15+, `xcodegen` (`brew install xcodegen`).
+
+```sh
+# 1. Generate Xcode project
+xcodegen generate
+
+# 2. Build Release .app (unsigned)
+DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer \
+xcodebuild \
+  -project Clipstasher.xcodeproj \
+  -scheme Clipstasher \
+  -configuration Release \
+  -derivedDataPath /tmp/clipstasher-build \
+  build \
+  CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+
+# 3. Package into DMG
+APP="/tmp/clipstasher-build/Build/Products/Release/Clipstasher.app"
+STAGING="/tmp/clipstasher-dmg-staging"
+VERSION="1.0.0"  # update per release
+
+rm -rf "$STAGING"
+mkdir -p "$STAGING"
+cp -r "$APP" "$STAGING/"
+ln -s /Applications "$STAGING/Applications"
+
+hdiutil create \
+  -volname "Clipstasher" \
+  -srcfolder "$STAGING" \
+  -ov -format UDZO \
+  "Clipstasher-${VERSION}.dmg"
+
+# 4. Print SHA256 for release notes
+shasum -a 256 "Clipstasher-${VERSION}.dmg"
+```
+
+Output: `Clipstasher-1.0.0.dmg` in the current directory.
+
 ## SHA256 Verification
 
 | Artifact | SHA256 |
