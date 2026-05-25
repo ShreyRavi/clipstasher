@@ -18,7 +18,8 @@ Clipstasher is distributed as an unsigned `.dmg`. macOS will show a security war
 
 1. Download the latest `.dmg` from the [Releases](https://github.com/ShreyRavi/clipstasher/releases) page.
 2. Open the `.dmg` and drag **Clipstasher.app** to `/Applications`.
-3. Right-click **Clipstasher.app** → **Open** → **Open** to bypass Gatekeeper (one-time).
+3. Run `xattr -d com.apple.quarantine /Applications/Clipstasher.app` to give permissions (one-time).
+4. Right-click **Clipstasher.app** → **Open** → **Open** to bypass Gatekeeper (one-time), and log into Keychain.
 
 ### Option B — CLI install
 
